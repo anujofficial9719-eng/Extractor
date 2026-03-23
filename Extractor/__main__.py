@@ -17,8 +17,13 @@ def shutdown():
 signal.signal(signal.SIGTERM, lambda s, f: loop.create_task(should_exit.set()))
 signal.signal(signal.SIGINT, lambda s, f: loop.create_task(should_exit.set()))
 
-# -------------------- Pyrogram client --------------------
-app = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+# -------------------- Pyrogram client with persistent session --------------------
+app = Client(
+    "bot_session",  # ye .session file create karega aur reuse hoga → FLOOD_WAIT avoid
+    api_id=API_ID,
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN
+)
 
 # -------------------- Premium handler registration --------------------
 @app.on_message(filters.command("add_premium"))
@@ -43,6 +48,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("Interrupted by user.")
     finally:
+        # Cancel pending tasks
         pending = asyncio.all_tasks(loop)
         for task in pending:
             task.cancel()
