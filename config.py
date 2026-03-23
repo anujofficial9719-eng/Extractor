@@ -7,7 +7,7 @@ API_ID = int(os.environ.get("API_ID", "34724970"))
 # ------------------------------------------------
 API_HASH = os.environ.get("API_HASH","f240eae7c60e8e30c17203ab0e052f7e")
 # ------------------------------------------------
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "8707483940:AAEUgZV01kAI3Ef9ArQl2clWeVSnoeCAQcs")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "8707483940:AAHAGkWV5mrT-RqsS4H-HdPVh9MbfbcT-Os")
 # ------------------------------------------------
 BOT_USERNAME = os.environ.get("BOT_USERNAME", "@Ak_course_extractor_bot")
 BOT_TEXT = "ANUJ EXTRACTOR"
