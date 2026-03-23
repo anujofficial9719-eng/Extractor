@@ -1,13 +1,19 @@
-# Extractor/server.py
-from flask import Flask
-import os
+# Use official Python 3.10.11 slim image
+FROM python:3.10.11-slim
 
-app = Flask(__name__)
+# Set working directory
+WORKDIR /app
 
-@app.route("/")
-def home():
-    return "Bot is running ✅"
+# Install system dependencies
+RUN apt-get update && apt-get install -y build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+# Copy requirements and install
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy all code
+COPY . .
+
+# Run your bot
+CMD ["python", "-m", "Extractor.server"]
