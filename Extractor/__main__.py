@@ -2,72 +2,51 @@ import asyncio
 import importlib
 import signal
 from pyrogram import Client, filters, idle
-from config import OWNER_ID
+from config import BOT_TOKEN, API_ID, API_HASH, OWNER_ID
 from Extractor.modules import ALL_MODULES
+from Extractor.modules import premium  # premium.py import
 
+# -------------------- Asyncio loop --------------------
 loop = asyncio.get_event_loop()
-
-# -------------------- Graceful shutdown --------------------
 should_exit = asyncio.Event()
 
 def shutdown():
     print("Shutting down gracefully...")
-    should_exit.set()  # triggers exit from idle
+    should_exit.set()
 
 signal.signal(signal.SIGTERM, lambda s, f: loop.create_task(should_exit.set()))
 signal.signal(signal.SIGINT, lambda s, f: loop.create_task(should_exit.set()))
 
-# -------------------- Premium users storage --------------------
-premium_users = {}
+# -------------------- Pyrogram client --------------------
+app = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
-async def add_premium_handler(client, message):
-    """Owner-only /add_premium handler"""
-    if message.from_user.id != OWNER_ID:
-        await message.reply("❌ Sirf owner hi premium add kar sakta hai.")
-        return
-
-    args = message.text.split()[1:]
-    if len(args) < 2:
-        await message.reply("⚠️ Usage: /add_premium user_id time")
-        return
-
-    user_id = int(args[0])
-    time = " ".join(args[1:])
-    premium_users[user_id] = time
-
-    await message.reply(f"✅ User {user_id} ko {time} ke liye premium diya gaya.")
+# -------------------- Premium handler registration --------------------
+@app.on_message(filters.command("add_premium"))
+async def handle_add_premium(client, message):
+    await premium.add_premium_handler(message)
 
 # -------------------- Bot bootstrap --------------------
-app = Client("bot")  # aapka pyrogram client
-
 async def sumit_boot():
-    # Import all modules
-    for all_module in ALL_MODULES:
-        importlib.import_module("Extractor.modules." + all_module)
-
-    # Register premium handler
-    app.add_handler(
-        pyrogram.handlers.MessageHandler(
-            add_premium_handler,
-            filters.command("add_premium")
-        )
-    )
+    # Import all modules dynamically
+    for module_name in ALL_MODULES:
+        importlib.import_module("Extractor.modules." + module_name)
 
     print("» ʙᴏᴛ ᴅᴇᴘʟᴏʏ sᴜᴄᴄᴇssғᴜʟʟʏ ✨ 🎉")
-    await idle()  # keeps the bot alive
+    await idle()  # keeps the bot running
     print("» ɢᴏᴏᴅ ʙʏᴇ ! sᴛᴏᴘᴘɪɴɢ ʙᴏᴛ.")
 
-# -------------------- Main --------------------
+# -------------------- Run --------------------
 if __name__ == "__main__":
     try:
+        app.start()  # start pyrogram client
         loop.run_until_complete(sumit_boot())
     except KeyboardInterrupt:
         print("Interrupted by user.")
     finally:
-        # Cancel pending tasks to avoid "destroyed but pending" error
         pending = asyncio.all_tasks(loop)
         for task in pending:
             task.cancel()
         loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))
+        app.stop()  # stop pyrogram client gracefully
         loop.close()
         print("Loop closed.")
