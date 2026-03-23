@@ -40,7 +40,7 @@ THUMB_URL = os.environ.get("THUMB_URL", "https://i.ibb.co/WpKRVMKy/7168219724-28
 # # Bot configuration
 # API_ID = int(os.environ.get("API_ID", "34724970"))
 # API_HASH = os.environ.get("API_HASH", "f240eae7c60e8e30c17203ab0e052f7e")
-# BOT_TOKEN = os.environ.get("BOT_TOKEN", "8707483940:AAEUgZV01kAI3Ef9ArQl2clWeVSnoeCAQcs")
+# BOT_TOKEN = os.environ.get("BOT_TOKEN", "8707483940:AAHAGkWV5mrT-RqsS4H-HdPVh9MbfbcT-Os")
 # BOT_USERNAME = os.environ.get("BOT_USERNAME", "Ak_course_extractor_bot")
 # OWNER_ID = int(os.environ.get("OWNER_ID", "7892805795"))
 # SUDO_USERS = list(map(int, getenv("SUDO_USERS", "7892805795").split()))
